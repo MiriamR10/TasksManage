@@ -1,0 +1,13 @@
+/* Task Form component styles */
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+}

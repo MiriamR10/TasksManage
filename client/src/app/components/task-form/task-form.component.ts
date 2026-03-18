@@ -4,22 +4,24 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { TaskService } from '../../services/task.service';
-import { TaskPriority, TaskStatus } from '../../models/task.model';
-import { TASK_PRIORITIES, TASK_STATUSES } from '../../models/task.enums';
+import { TASK_PRIORITIES, TASK_STATUSES, TaskPriority, TaskStatus } from '../../models/task.enums';
 
 @Component({
-  selector: 'app-task-edit',
+  selector: 'app-task-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './task-edit.component.html',
-  styleUrls: ['./task-edit.component.scss']
+  templateUrl: './task-form.component.html',
+  styleUrls: ['./task-form.component.scss']
 })
-export class TaskEditComponent implements OnInit {
+export class TaskFormComponent implements OnInit {
   taskForm: FormGroup;
   priorities = TASK_PRIORITIES;
   statuses = TASK_STATUSES;
+  isEdit = false;
   taskId: number | null = null;
   isLoading = false;
+  title = 'הוספת משימה חדשה';
+  buttonText = 'הוספה';
 
   private fb = inject(FormBuilder);
   private taskService = inject(TaskService);
@@ -43,11 +45,11 @@ export class TaskEditComponent implements OnInit {
         const idStr = params.get('id');
         const parsed = idStr ? parseInt(idStr, 10) : NaN;
         if (!isNaN(parsed)) {
+          this.isEdit = true;
+          this.title = '✏️ עריכת משימה';
+          this.buttonText = 'עדכון';
           this.taskId = parsed;
           this.loadTask(parsed);
-        } else {
-          // Invalid id: go back to the list
-          this.router.navigate(['/']);
         }
       });
     }
@@ -79,24 +81,29 @@ export class TaskEditComponent implements OnInit {
   }
 
   onSubmit() {
-    // Make sure validation feedback is shown, even if the user didn't touch a field.
+    // Make sure validation messages appear even if the user didn't touch the fields.
     this.taskForm.markAllAsTouched();
 
-    if (!this.taskForm.valid || !this.taskId || !isPlatformBrowser(this.platformId)) {
+    if (!this.taskForm.valid || !isPlatformBrowser(this.platformId)) {
       return;
     }
 
     const task = this.taskForm.value;
-    this.taskService.updateTask(this.taskId, task).subscribe({
-      next: () => {
-        this.taskService.setCurrentTask(null); // Clear store
+    if (this.isEdit && this.taskId) {
+      this.taskService.updateTask(this.taskId, task).subscribe({
+        next: () => {
+          this.taskService.setCurrentTask(null); // Clear store
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          console.error('Error updating task:', err);
+          alert('שגיאה בעדכון המשימה');
+        }
+      });
+    } else {
+      this.taskService.addTask(task).subscribe(() => {
         this.router.navigate(['/']);
-      },
-      error: (err) => {
-        console.error('Error updating task:', err);
-        alert('שגיאה בעדכון המשימה');
-      }
-    });
+      });
+    }
   }
 }
-
