@@ -1,0 +1,59 @@
+<div class="container mt-5" dir="rtl" style="text-align: right;">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h1 class="h5 mb-0 text-primary">רשימת משימות</h1>
+          <a routerLink="/new" class="btn btn-primary btn-sm">
+            + משימה חדשה
+          </a>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-custom align-middle">
+              <thead>
+                <tr>
+                  <th>כותרת</th>
+                  <th>תיאור</th>
+                  <th>עדיפות</th>
+                  <th>סטטוס</th>
+                  <th>תאריך יעד</th>
+                  <th class="text-end">פעולות</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let task of tasks()">
+                  <td>{{ task.title }}</td>
+                  <td>{{ task.description }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getPriorityClass(task.priority)">
+                      {{ task.priority }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusClass(task.status)">
+                      {{ task.status }}
+                    </span>
+                  </td>
+                  <td>{{ formatDate(task.dueDate) }}</td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-link icon-btn text-primary" (click)="editTask(task)" title="עריכה">
+                      ✏️
+                    </button>
+                    <button type="button" class="btn btn-link icon-btn text-primary" (click)="deleteTask(task.id!)" title="מחיקה">
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="tasks().length === 0" class="alert alert-secondary mt-3">
+        אין משימות ממתינות. <a routerLink="/new" class="text-primary">צור משימה חדשה</a>
+      </div>
+    </div>
+  </div>
+</div>
