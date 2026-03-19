@@ -13,6 +13,7 @@ import { TASK_PRIORITIES, TASK_STATUSES, TaskPriority, TaskStatus } from '../../
   templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss']
 })
+
 export class TaskFormComponent implements OnInit {
   taskForm: FormGroup;
   priorities = TASK_PRIORITIES;
@@ -46,7 +47,7 @@ export class TaskFormComponent implements OnInit {
         const parsed = idStr ? parseInt(idStr, 10) : NaN;
         if (!isNaN(parsed)) {
           this.isEdit = true;
-          this.title = '✏️ עריכת משימה';
+          this.title = 'עריכת משימה';
           this.buttonText = 'עדכון';
           this.taskId = parsed;
           this.loadTask(parsed);

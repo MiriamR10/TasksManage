@@ -1,4 +1,5 @@
 using Microsoft.Extensions.FileProviders;
+using TaskManagerServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register TasksService
+builder.Services.AddScoped<TasksService>();
 
 // Add CORS to allow Angular frontend to communicate with backend
 builder.Services.AddCors(options =>
